@@ -15,3 +15,34 @@ Facebook AI (현 meta AI)에서 개발한 visual segmentation 모델 SAM(Segment
 ### 데이터 수집 및 구성 
 kaggle에 음식 사진을 수집하여 데이터셋을 구축한다. 
 - 음식 사진 분류: [Food Image Classification Dataset](https://www.kaggle.com/datasets/harishkumardatalab/food-image-classification-dataset)
+
+### 디렉토리 구조
+```
+data/
+├── train/
+│   ├── 도넛/
+│   └── 피자/
+|   └── .../
+|   └── .../
+├── val/
+│   ├── 도넛/
+│   └── 피자/
+|   └── .../
+|   └── .../
+└── test/
+│   ├── 도넛/
+│   └── 피자/
+|   └── .../
+|   └── .../
+```
+
+### 전처리
+
+## III. 모델: SAM2 상세 설명
+
+
+
+## IV. 학습 과정
+
+
+### 전체 흐름 개요
