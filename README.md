@@ -12,6 +12,18 @@ SAM2 모델을 활용한 음식 사진 object segmentation과 칼로리 계산 �
 ### Motivation 
 Facebook AI (현 meta AI)에서 개발한 visual segmentation 모델 SAM(Segment Anything Model)은 사전 학습된 파운데이션 모델(Pre-trained foundation model)으로 이미지 속에 있는 객체를 segmentation을 하고 기존의 컴퓨터 비전에서의 문제인 데이터 부족이라는 문제를 극복하기 위한 파운데이션 모델을 구축하였다. 이후 2024년 9월 출시한 SAM2는 이미지를 넘어서 동영상 객체에 대해서도 segmentation을 효과적으로 실행할 수 있는 능력을 보여준다. 따라서 SAM2를 적용할 데이터셋을 탐색하는 중 kaggle의 음식 사진 데이터셋을 발견하여 이를 통해서 SAM2를 적용할 계획이다. 최종적인 목표로 각각의 음식들과 이에 상응하는 칼로리를 매칭하여 전체적인 칼로리를 계산할 수 있는 모델을 구현 해보고자 한다. 
 
+### Problem with current food segmentation apps
+기존의 칼로리 측정앱을 사용해보면서 갖고 있는 문제점들에 대해서 알아보고자 하였다. 따라서 카카오 헬스케어에서 운영중인 "파스타"라는 칼로리 측정어플을 이용해보았다. 어플을 사용해보면서 가장 큰 문제점으로는 같은 음식이면 크기에 상관없이 항상 일정한 칼로리로 측정을 하는 문제점이 존재한다. 아래 사진들과 같이 떡볶이라는 음식 사진을 측정할 때 음식의 양과 재료들이 다르지만 항상 일정하게 509kcal로 측정을 하고 있다.
+
+<img width="300" height="600" alt="image" src="https://github.com/user-attachments/assets/f94b57e8-17e8-4165-ae00-8a6b14386bdd" />
+<img width="300" height="600" alt="image" src="https://github.com/user-attachments/assets/c120e213-07f0-4e98-a223-db38b06ab7a0" />
+<img width="300" height="600" alt="image" src="https://github.com/user-attachments/assets/d225a83f-06e7-4aeb-9437-aee8ddf4a832" />
+
+또한 음식의 칼로리를 측정할 때 전체 칼로리 하나만 측정이 되고 음식 내에 세부적인 칼로리 등에 대해서는 측정이 되지 않거나 아예 무시되는 개선사항이 존재한다. 아래 사진에서는 스테이크 뿐만 아니라 랍스타와 채소들도 있지만 오직 스테이크 하나만을 측정하고 있다. 
+
+<img width="300" height="600" alt="image" src="https://github.com/user-attachments/assets/9117ab09-01c9-45ed-be04-4ab47dbba713" />
+
+
 ### What do you want to see at the end?
 기존 Yolo 기반 모델이 아닌 SAM2 모델을 선택한 이유로는 우선 프롬프트 기반의 인스턴스 분할이 가능하며 특히 SAM2에는 모델이 보지 못한 객체에서도 사용자의 프롬프트에 따라 분할이 가능한(Class-agnostic) 장점이 있다. 또한 SAM2의 뛰어난 generalization 성능을 이용하여 파인튜닝을 통한 음식의 객체를 분석할 예정이다. 이를 통해서 음식의 사진과 음식의 용량을 파악하고 입력 이미지의 칼로리가 어떻게 될 것인지 예측하는 모델을 구현할 예정이다.  
 
