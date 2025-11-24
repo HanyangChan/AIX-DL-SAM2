@@ -124,10 +124,17 @@ SAM 1과 동일한 방식 사용
 
 ## IV. 학습 과정
 
+- **프레임워크** : PyTorch
+- **손실 함수** : CrossEntropy
+- **옵티마이저** : Adam (lr = 0.0001)
+- **scheduler** : StepLR (gamma=0.1)
+
 SAM2를 통해서 물체를 인식하고 EfficientNet V2를 이용해서 물체를 분류(classification)할 예정이다. EfficientNet은 기존의 CNN이나 ResNet에서 정확도와 효율에서 좋은 모습을 보이기 때문에 선택하였다. ImageNet을 학습한 Pretrained된 EfficientNet을 사용하였다. 
 우선 아무 학습없이 하였을 때 분류하였을 때 다음과 같은 결과가 나왔다. 
-<img width="483" height="344" alt="image" src="https://github.com/user-attachments/assets/d195c4dc-7fe8-408b-ac0e-41c4a7759714" />
 
+<img width="540" height="796" alt="image" src="https://github.com/user-attachments/assets/0615e562-48f4-4579-8ae7-47dc7e2856a0" />
+
+이후 10번의 에포크를 돌린다음 결과는 다음과 같다. 
 
 ### 전체 흐름 개요
 Meta AI의 SAM2를 위주로 하되, 속도나 객체 탐지를 하는데 있어서 문제가 생기면 Yolo기반을 활용하여 객체를 탐지하고 바운더리 박스를 생성하고 나서 바운더리 박스를 SAM2의 프롬프트로 입력하여 탐지된 객체에 대한 픽셀 단위의 정밀한 마스크를 생성하는 방향을 진행할 예정이다.
