@@ -1,4 +1,4 @@
-# AIX-DL-SAM2
+<img width="800" height="400" alt="image" src="https://github.com/user-attachments/assets/c15c7dc4-9f31-4351-8dee-09037cea40ce" /># AIX-DL-SAM2
 Project for AI+X: DeepLearning, for 2025-2 semester
 
 SAM2 모델을 활용한 음식 사진 object segmentation과 칼로리 계산 모델
@@ -128,6 +128,7 @@ SAM 1과 동일한 방식 사용
 - **손실 함수** : CrossEntropy
 - **옵티마이저** : Adam (lr = 0.0001)
 - **scheduler** : StepLR (gamma=0.1)
+- **Proportion of train/vaildation : 80/20%
 
 SAM2를 통해서 물체를 인식하고 EfficientNet V2를 이용해서 물체를 분류(classification)할 예정이다. EfficientNet은 기존의 CNN이나 ResNet에서 정확도와 효율에서 좋은 모습을 보이기 때문에 선택하였다. ImageNet을 학습한 Pretrained된 EfficientNet을 사용하였다. 
 우선 아무 학습없이 하였을 때 분류하였을 때 다음과 같은 결과가 나왔다. 
@@ -136,10 +137,22 @@ SAM2를 통해서 물체를 인식하고 EfficientNet V2를 이용해서 물체�
 
 이후 10번의 에포크를 돌린다음 결과는 다음과 같다. 
 
-### 전체 흐름 개요
-Meta AI의 SAM2를 위주로 하되, 속도나 객체 탐지를 하는데 있어서 문제가 생기면 Yolo기반을 활용하여 객체를 탐지하고 바운더리 박스를 생성하고 나서 바운더리 박스를 SAM2의 프롬프트로 입력하여 탐지된 객체에 대한 픽셀 단위의 정밀한 마스크를 생성하는 방향을 진행할 예정이다.
+<img width="700" height="65" alt="image" src="https://github.com/user-attachments/assets/0d0f2368-d991-429a-a388-813b51901bbd" />
 
-## V.
+### Confusion Matrix
+
+<img width="1000" height="800" alt="image" src="https://github.com/user-attachments/assets/4632600e-627d-452f-862d-f398b6b04708" />
+
+### gradcam
+
+<img width="800" height="400" alt="image" src="https://github.com/user-attachments/assets/5e2519d0-a28d-44ce-9f29-653b956a6064" />
+
+<img width="800" height="400" alt="image" src="https://github.com/user-attachments/assets/2320c771-0cce-4997-a9c6-48c424d7daa6" />
+
+
+
+## V. 전체 흐름 개요
+Meta AI의 SAM2를 위주로 하되, 속도나 객체 탐지를 하는데 있어서 문제가 생기면 Yolo기반을 활용하여 객체를 탐지하고 바운더리 박스를 생성하고 나서 바운더리 박스를 SAM2의 프롬프트로 입력하여 탐지된 객체에 대한 픽셀 단위의 정밀한 마스크를 생성하는 방향을 진행할 예정이다.
 
 ## VI. SAM2 모델 활용
 
