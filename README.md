@@ -130,7 +130,31 @@ Meta AI의 SAM2를 위주로 하되, 속도나 객체 탐지를 하는데 있어
 
 ## V.
 
-## VI.
+## VI. SAM2 모델 활용
+
+SAM2모델을 이용하기 위해서 파이썬 패키지인 `ultralytics`을 활용하여 SAM2에서 이미지를 segementation을 할 수 있도록 하였다. 
+```Python
+!uv pip install ultralytics
+import ultralytics
+ultralytics.checks()
+
+from ultralytics import SAM
+
+# Load a model
+# For SAM=sam_b.pt, SAM2=sam2_b.pt, SAM2.1=sam2.1_b.pt
+model = SAM("sam2.1_b.pt")
+
+model.info()  # Display model information (optional)
+
+# Run inference (image or video)
+results = model("https://ultralytics.com/images/bus.jpg")  # image
+results[0].show()  # Display results
+```
+
+
+<img width="600" height="780" alt="image" src="https://github.com/user-attachments/assets/c391566d-9ace-4ecf-81a4-e1d8f1f3ece5" />
+
+
 
 ## VII. 웹서비스 배포 (11/22 진행중)
 프론트앤드는 CSS, react와 자바스크립트를 활용하여 개발하였으며 pytest를 활용한 API endpoint 그리고 fastAPI를 활용하여 배포를 진행하였다. 
