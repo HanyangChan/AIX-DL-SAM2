@@ -1,6 +1,3 @@
-<img width="800" height="400" alt="image" src="https://github.com/user-attachments/assets/c15c7dc4-9f31-4351-8dee-09037cea40ce" /># AIX-DL-SAM2
-Project for AI+X: DeepLearning, for 2025-2 semester
-
 SAM2 모델을 활용한 음식 사진 object segmentation과 칼로리 계산 모델
 
 - 황병찬 서울 데이터사이언스학부 2022069407 - 데이터 수집 및 코드 구축 및 블로그 작성
