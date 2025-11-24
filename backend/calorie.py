@@ -9,9 +9,17 @@ def estimate_calories(segments, image_path):
     # This is a safer heuristic than raw pixels since image resolution varies.
     # Assumptions: Standard close-up food shot.
     MAX_CALORIES_PER_SCREEN = {
-        "Meat": 2000.0,      # If whole screen was meat
-        "Vegetable": 400.0,  # If whole screen was veg
-        "Mushroom": 200.0,   # If whole screen was mushroom
+        "Meat": 2000.0,
+        "Vegetable": 400.0,
+        "Mushroom": 200.0,
+        "Pizza": 2500.0,
+        "Burger": 2200.0,
+        "Rice": 1200.0,
+        "Noodle": 1100.0,
+        "Salad": 300.0,
+        "Dessert": 3000.0,
+        "Fruit": 500.0,
+        "Soup": 600.0,
         "default": 600.0
     }
 
