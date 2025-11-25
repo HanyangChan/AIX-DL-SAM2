@@ -142,17 +142,36 @@ SAM2를 통해서 물체를 인식하고 EfficientNet V2를 이용해서 물체�
 
 <img width="1000" height="800" alt="image" src="https://github.com/user-attachments/assets/4632600e-627d-452f-862d-f398b6b04708" />
 
+Confusion Matrix는 모델이 각 음식 클래스를 얼마나 정확하게 맞추는지 보여주는 혼동 행렬이다.
+오른쪽 아래 정방향으로의 대각선은 맞춘 개수를, 대각선 바깥쪽은 틀린 개수를 의미한
+다. 어떤 클래스끼리 헷갈리는지를 한눈에 보여주는 자료라고 볼 수 있다.
+
+- ‘Donut’->’Donut’: 30번 맞춤
+- ‘Taco’->’Taco: 29번 맞춤
+- ‘Baked Potato’->’Baked Potato’: 18번 맞춤
+
 ### Grad-CAM
 
 <img width="800" height="400" alt="image" src="https://github.com/user-attachments/assets/5e2519d0-a28d-44ce-9f29-653b956a6064" />
 
 <img width="800" height="400" alt="image" src="https://github.com/user-attachments/assets/2320c771-0cce-4997-a9c6-48c424d7daa6" />
 
+왼쪽 사진은 원본 이미지고 오른쪽 사진은 Grad-Cam 결과 이미지다. Grad-Cam은 모델
+이 이미지를 보고 예측을 내릴 때 어느 부분을 가장 중요하게 봤는지를 시각화한 자료다.
+빨간색~노란색은 모델이 강하게 주목한 부분을, 파란색은 별로 주목하지 않은 부분을 의
+미한다.
+
+첫번째 만두 사진에서는 만두 형태의 윗부분과 골격을 강하게 참고해서 ‘momos’
+라고 판단했다는 의미이고 두번째 치즈 케이크 사진에서는 케이크 형태의 중심을 강하게
+참고해서 ‘cheesecake’라고 판단했다는 의미이다.
+
 ### t-SNE
 
 <img width="1000" height="800" alt="image" src="https://github.com/user-attachments/assets/411d778e-f1bb-4fc1-bf67-4aff3e7e0975" />
 
-
+t-SNE는 이미지 임베딩을 2D에 압축해 시각화한 것이다. 비슷한 종류의 음식 데이터는
+가까운 위치에 모이고 다른 종류의 음식은 멀리 떨어져 있음을 보여준다. 따라서 이 시
+각화 자료는 모델이 추출한 특징으로 음식을 얼마나 잘 구분했는지 보여주는 그래프다.
 
 ## VI. 전체 흐름 개요 및 SAM2 모델 활용
 
