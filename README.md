@@ -140,12 +140,15 @@ SAM2를 통해서 물체를 인식하고 EfficientNet V2를 이용해서 물체�
 
 <img width="1000" height="800" alt="image" src="https://github.com/user-attachments/assets/4632600e-627d-452f-862d-f398b6b04708" />
 
-### gradcam
+### Grad-CAM
 
 <img width="800" height="400" alt="image" src="https://github.com/user-attachments/assets/5e2519d0-a28d-44ce-9f29-653b956a6064" />
 
 <img width="800" height="400" alt="image" src="https://github.com/user-attachments/assets/2320c771-0cce-4997-a9c6-48c424d7daa6" />
 
+### t-SNE
+
+<img width="1000" height="800" alt="image" src="https://github.com/user-attachments/assets/411d778e-f1bb-4fc1-bf67-4aff3e7e0975" />
 
 
 ## V. 전체 흐름 개요
