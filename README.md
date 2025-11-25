@@ -136,6 +136,8 @@ SAM2를 통해서 물체를 인식하고 EfficientNet V2를 이용해서 물체�
 
 <img width="700" height="65" alt="image" src="https://github.com/user-attachments/assets/0d0f2368-d991-429a-a388-813b51901bbd" />
 
+## V. 분석 및 시각화
+
 ### Confusion Matrix
 
 <img width="1000" height="800" alt="image" src="https://github.com/user-attachments/assets/4632600e-627d-452f-862d-f398b6b04708" />
@@ -151,10 +153,10 @@ SAM2를 통해서 물체를 인식하고 EfficientNet V2를 이용해서 물체�
 <img width="1000" height="800" alt="image" src="https://github.com/user-attachments/assets/411d778e-f1bb-4fc1-bf67-4aff3e7e0975" />
 
 
-## V. 전체 흐름 개요
-Meta AI의 SAM2를 위주로 하되, 속도나 객체 탐지를 하는데 있어서 문제가 생기면 Yolo기반을 활용하여 객체를 탐지하고 바운더리 박스를 생성하고 나서 바운더리 박스를 SAM2의 프롬프트로 입력하여 탐지된 객체에 대한 픽셀 단위의 정밀한 마스크를 생성하는 방향을 진행할 예정이다.
 
-## VI. SAM2 모델 활용
+## VI. 전체 흐름 개요 및 SAM2 모델 활용
+
+Meta AI의 SAM2를 위주로 하되, 속도나 객체 탐지를 하는데 있어서 문제가 생기면 Yolo기반을 활용하여 객체를 탐지하고 바운더리 박스를 생성하고 나서 바운더리 박스를 SAM2의 프롬프트로 입력하여 탐지된 객체에 대한 픽셀 단위의 정밀한 마스크를 생성하는 방향을 진행할 예정이다.
 
 SAM2모델을 이용하기 위해서 파이썬 패키지인 `ultralytics`을 활용하여 SAM2에서 이미지를 segementation을 할 수 있도록 하였다. 
 ```Python
