@@ -121,14 +121,19 @@ SAM 1과 동일한 방식 사용
 
 ## IV. 학습 과정
 
+<img width="1299" height="703" alt="image" src="https://github.com/user-attachments/assets/60a50fcf-2eb3-4b36-bb1a-f10218b99d0a" />
+
+SAM2를 통해서 물체를 인식하고 EfficientNet V2를 이용해서 물체를 분류(classification)할 예정이다. EfficientNet은 기존의 CNN이나 ResNet에서 정확도와 효율에서 좋은 모습을 보이기 때문에 선택하였다. ImageNet을 학습한 Pretrained된 EfficientNet을 사용하였다. 
+
+
+
 - **프레임워크** : PyTorch
 - **손실 함수** : CrossEntropy
 - **옵티마이저** : Adam (lr = 0.0001)
 - **scheduler** : StepLR (gamma=0.1)
 - **Proportion of train/vaildation : 80/20%
 
-SAM2를 통해서 물체를 인식하고 EfficientNet V2를 이용해서 물체를 분류(classification)할 예정이다. EfficientNet은 기존의 CNN이나 ResNet에서 정확도와 효율에서 좋은 모습을 보이기 때문에 선택하였다. ImageNet을 학습한 Pretrained된 EfficientNet을 사용하였다. 
-우선 아무 학습없이 하였을 때 분류하였을 때 다음과 같은 결과가 나왔다. 
+다음과 같은 세팅으로 우선 아무 학습없이 하였을 때 분류하였을 때 다음과 같은 결과가 나왔다. 
 
 <img width="540" height="796" alt="image" src="https://github.com/user-attachments/assets/0615e562-48f4-4579-8ae7-47dc7e2856a0" />
 
