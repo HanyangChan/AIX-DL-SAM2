@@ -121,7 +121,10 @@ SAM 1과 동일한 방식 사용
 
 ## IV. 학습 과정
 
-<img width="1299" height="703" alt="image" src="https://github.com/user-attachments/assets/60a50fcf-2eb3-4b36-bb1a-f10218b99d0a" />
+<img width="1248" height="681" alt="image" src="https://github.com/user-attachments/assets/c3f115e3-0849-4ac9-9406-40e8e80dacb5" />
+
+
+
 
 SAM2를 통해서 물체를 인식하고 EfficientNet V2를 이용해서 물체를 분류(classification)할 예정이다. EfficientNet은 기존의 CNN이나 ResNet에서 정확도와 효율에서 좋은 모습을 보이기 때문에 선택하였다. ImageNet을 학습한 Pretrained된 EfficientNet을 사용하였다. 
 
@@ -180,29 +183,28 @@ t-SNE는 이미지 임베딩을 2D에 압축해 시각화한 것이다. 비슷�
 
 ## VI. 전체 흐름 개요 및 SAM2 모델 활용
 
-Meta AI의 SAM2를 위주로 하되, 속도나 객체 탐지를 하는데 있어서 문제가 생기면 Yolo기반을 활용하여 객체를 탐지하고 바운더리 박스를 생성하고 나서 바운더리 박스를 SAM2의 프롬프트로 입력하여 탐지된 객체에 대한 픽셀 단위의 정밀한 마스크를 생성하는 방향을 진행할 예정이다.
+Meta AI의 SAM2를 위주로 하되 SAM2가 설치가 되지않았거나 문제가 생겼을 때 opencv가 대신 작동이 되도록 설정을 해두었다.
 
-SAM2모델을 이용하기 위해서 파이썬 패키지인 `ultralytics`을 활용하여 SAM2에서 이미지를 segementation을 할 수 있도록 하였다. 
-```Python
-!uv pip install ultralytics
-import ultralytics
-ultralytics.checks()
+SAM2 라이브러리를 이용하여 다음과 같이 불러올 수 있다. 
 
-from ultralytics import SAM
+`from sam2.build_sam import build_sam2`
 
-# Load a model
-# For SAM=sam_b.pt, SAM2=sam2_b.pt, SAM2.1=sam2.1_b.pt
-model = SAM("sam2.1_b.pt")
+`from sam2.sam2_image_predictor import SAM2ImagePredictor`
 
-model.info()  # Display model information (optional)
+실행 위치 (Code Location):
 
-# Run inference (image or video)
-results = model("https://ultralytics.com/images/bus.jpg")  # image
-results[0].show()  # Display results
-```
-
-
-<img width="600" height="780" alt="image" src="https://github.com/user-attachments/assets/c391566d-9ace-4ecf-81a4-e1d8f1f3ece5" />
+`backend/main.py`
+: 
+predict
+ 함수 안에서 
+run_sam2_inference
+를 호출하여 SAM2를 실행합니다. 여기서 그리드 포인트를 생성하고 결과를 수집합니다.
+backend/sam2_utils.py
+: 실제로 SAM2 모델을 로드하고(
+load_sam2_model
+) 추론을 수행하는(
+run_sam2_inference
+) 코드가 들어있습니다.
 
 
 
@@ -230,4 +232,10 @@ npm rum dev
 <img width="932" height="810" alt="image" src="https://github.com/user-attachments/assets/5429d806-95fe-457f-a8e4-51510b60bddd" />
 
 다음과 같이 처음 보는 사진들에 대해서 잘 인식을 하지못하는 모습을 보여주고 있다. 우선 기초적인 틀을 만들기 위해서 웹에서는 SAM2모델는 이후 추가할 예정이므로 물체를 인식하는 능력이 엄청 뛰어나지 않으며 기존 이미지에서 오버피팅되는 모습을 보여준다. 따라서 이후 SAM2을 연결할 예정이며 성능이 좋지 않은 경우 이미지 데이터셋을 파인 튜닝하여 성능을 향상시킬 예정이다.  
+
+## 수정 사항 
+캐글에 있는 데이터셋을 통하여 efficientNet을 학습시키였고 sam2를 바탕으로 물체를 segementation하도록 하였다. 여러 물체가 있는 경우에도 서로 구별하여 잘 인식하고 있으며 각각의 칼로리를 계산해서 더하고 있다. 
+
+<img width="1404" height="742" alt="image" src="https://github.com/user-attachments/assets/c9a4cd66-69a6-4e39-b21c-950f09fdf94a" />
+
 
