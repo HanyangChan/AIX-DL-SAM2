@@ -13,6 +13,22 @@ import numpy as np
 import cv2
 import base64
 import io
+import numpy as np
+
+def read_image_safe(path):
+    """
+    Reads an image from a path, handling Unicode characters correctly on Windows.
+    """
+    try:
+        # Read file as byte array
+        with open(path, "rb") as f:
+            file_bytes = np.asarray(bytearray(f.read()), dtype=np.uint8)
+            # Decode image
+            img = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
+            return img
+    except Exception as e:
+        print(f"Error reading image {path}: {e}")
+        return None
 
 # Import project modules
 from calorie import estimate_calories
@@ -31,32 +47,35 @@ models = {
 async def lifespan(app: FastAPI):
     # Load Classifier
     try:
-        if os.path.exists("backend/model_metadata.json") and os.path.exists("backend/best_model.pth"):
-            with open("backend/model_metadata.json", "r") as f:
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        metadata_path = os.path.join(base_dir, "model_metadata.json")
+        model_path = os.path.join(base_dir, "best_model.pth")
+
+        if os.path.exists(metadata_path) and os.path.exists(model_path):
+            with open(metadata_path, "r") as f:
                 meta = json.load(f)
                 models["class_names"] = meta["class_names"]
             
             print(f"Loading classifier with classes: {models['class_names']}")
             model = initialize_model(len(models["class_names"]))
-            model.load_state_dict(torch.load("backend/best_model.pth", map_location=models["device"]))
+            model.load_state_dict(torch.load(model_path, map_location=models["device"]))
             model.eval()
             models["classifier"] = model
             print("Classifier loaded successfully.")
         else:
-            print("Warning: Classifier model or metadata not found. Using dummy classification.")
+            print(f"Model files not found at {metadata_path} or {model_path}. Using dummy classes.")
+            models["class_names"] = ["classA", "classB"]
+            
     except Exception as e:
-        print(f"Error loading classifier: {e}")
+        print(f"Failed to load classifier: {e}")
+        models["class_names"] = ["classA", "classB"]
 
     # Load SAM2
     try:
         sam2_ckpt = "backend/sam2_hiera_large.pt"
-        sam2_cfg = "sam2_hiera_l.yaml" # Assumes this config is in the path or handled by sam2 library
-        # Note: sam2 config loading might be tricky depending on where the library looks. 
-        # For now, we assume the user has the config or we use the default if possible.
-        # If sam2_utils handles it, great.
-        
+        sam2_cfg = "sam2_hiera_l.yaml"
+        # We might need to adjust config path logic
         if os.path.exists(sam2_ckpt):
-             # We might need to adjust config path logic
              models["sam2"] = load_sam2_model(sam2_cfg, sam2_ckpt, device=models["device"])
              print("SAM2 loaded successfully.")
         else:
@@ -108,6 +127,56 @@ async def health_check():
         "sam2_loaded": models["sam2"] is not None
     }
 
+def segment_with_opencv(image_path):
+    """
+    Segments objects using OpenCV contours (fallback for missing SAM2).
+    Assumes objects are on a lighter background or distinct.
+    """
+    img = read_image_safe(image_path)
+    if img is None:
+        return []
+        
+    h, w = img.shape[:2]
+    
+    # Convert to grayscale
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    
+    # Blur to reduce noise
+    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+    
+    # Thresholding
+    # Try Otsu's binarization
+    # Invert if background is white (common in food photos)
+    # We assume food is darker than white background
+    _, thresh = cv2.threshold(blurred, 200, 255, cv2.THRESH_BINARY_INV)
+    
+    # Find contours
+    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    
+    masks = []
+    for cnt in contours:
+        # Filter small noise
+        area = cv2.contourArea(cnt)
+        if area < 1000: # Minimum area threshold
+            continue
+            
+        # Create mask for this contour
+        mask = np.zeros((h, w), dtype=np.uint8)
+        cv2.drawContours(mask, [cnt], -1, 1, -1)
+        masks.append(mask)
+        
+    # If no contours found, try standard thresholding (maybe dark background?)
+    if not masks:
+         _, thresh = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+         contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+         for cnt in contours:
+            if cv2.contourArea(cnt) < 1000: continue
+            mask = np.zeros((h, w), dtype=np.uint8)
+            cv2.drawContours(mask, [cnt], -1, 1, -1)
+            masks.append(mask)
+            
+    return masks
+
 @app.post("/predict", response_model=PredictionResponse)
 async def predict(file: UploadFile = File(...)):
     try:
@@ -115,40 +184,139 @@ async def predict(file: UploadFile = File(...)):
         with open(temp_file, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
             
-        # 1. Classification
-        predicted_class = "Unknown"
-        if models["classifier"]:
-            input_tensor = preprocess_image(temp_file).to(models["device"])
-            with torch.no_grad():
-                outputs = models["classifier"](input_tensor)
-                _, preds = torch.max(outputs, 1)
-                predicted_class = models["class_names"][preds.item()]
-        
-        # 2. Segmentation (SAM2)
+        # 1. Segmentation (SAM2) - Grid Prompting
         masks = []
+        
+        # Read image safely
+        img = read_image_safe(temp_file)
+        if img is None:
+             raise ValueError(f"Failed to read image: {temp_file}")
+        h, w = img.shape[:2]
+
         if models["sam2"]:
-            # Use center point as prompt
-            img = cv2.imread(temp_file)
-            h, w = img.shape[:2]
-            center_point = np.array([[w//2, h//2]])
-            point_labels = np.array([1]) # 1 = foreground
+            # Generate grid points (3x3 grid)
+            grid_x = [w // 4, w // 2, 3 * w // 4]
+            grid_y = [h // 4, h // 2, 3 * h // 4]
+            points = []
+            for x in grid_x:
+                for y in grid_y:
+                    points.append([x, y])
             
-            _, sam_masks, _ = run_sam2_inference(
-                models["sam2"], 
-                temp_file, 
-                points=center_point, 
-                labels=point_labels
-            )
-            # sam_masks is (N, H, W). We take the best one (usually index 0 for single object)
-            best_mask = sam_masks[0]
-            masks.append({"mask": best_mask, "label": predicted_class})
+            detected_masks = []
+            
+            # Run inference for each point
+            print(f"Running SAM2 on {len(points)} points...")
+            for i, pt in enumerate(points):
+                point_coords = np.array([pt])
+                point_labels = np.array([1])
+                
+                _, sam_masks, scores = run_sam2_inference(
+                    models["sam2"], 
+                    temp_file, 
+                    points=point_coords, 
+                    labels=point_labels
+                )
+                
+                # sam_masks is (3, H, W), scores is (3,)
+                # Take best mask
+                best_idx = np.argmax(scores)
+                best_mask = sam_masks[best_idx]
+                best_score = scores[best_idx]
+                
+                print(f"Point {pt}: Score {best_score:.3f}")
+
+                # Filter weak predictions
+                if best_score < 0.80: # Threshold
+                    print(f"  -> Skipped (Low Score)")
+                    continue
+                    
+                # Check IoU with existing masks to avoid duplicates
+                is_duplicate = False
+                for existing_mask in detected_masks:
+                    # Calculate IoU
+                    intersection = np.logical_and(best_mask, existing_mask).sum()
+                    union = np.logical_or(best_mask, existing_mask).sum()
+                    iou = intersection / union if union > 0 else 0
+                    
+                    if iou > 0.5: # High overlap means same object
+                        is_duplicate = True
+                        print(f"  -> Skipped (Duplicate, IoU: {iou:.2f})")
+                        break
+                
+                if not is_duplicate:
+                    print(f"  -> Added new mask")
+                    detected_masks.append(best_mask)
+            
+            print(f"Total masks found: {len(detected_masks)}")
+
+            # If no masks found (e.g. background points), fallback to center or dummy
+            if not detected_masks:
+                 print("No masks found, falling back to dummy.")
+                 # Fallback to center
+                 dummy_mask = np.zeros((h, w), dtype=np.uint8)
+                 cv2.circle(dummy_mask, (w//2, h//2), min(h, w)//3, 1, -1)
+                 detected_masks.append(dummy_mask)
+                 
+            masks = [{"mask": m} for m in detected_masks]
+
         else:
-            # Dummy segmentation
-            img = cv2.imread(temp_file)
-            h, w = img.shape[:2]
-            dummy_mask = np.zeros((h, w), dtype=np.uint8)
-            cv2.circle(dummy_mask, (w//2, h//2), min(h, w)//3, 1, -1)
-            masks.append({"mask": dummy_mask, "label": predicted_class})
+            # Fallback: OpenCV Segmentation
+            print("SAM2 not available. Using OpenCV fallback.")
+            cv_masks = segment_with_opencv(temp_file)
+            if cv_masks:
+                masks = [{"mask": m} for m in cv_masks]
+            else:
+                # Dummy segmentation if OpenCV fails
+                dummy_mask = np.zeros((h, w), dtype=np.uint8)
+                cv2.circle(dummy_mask, (w//2, h//2), min(h, w)//3, 1, -1)
+                masks.append({"mask": dummy_mask})
+
+        # 2. Classification per Mask (Crop & Classify)
+        if models["classifier"]:
+            # Pre-load full image tensor for cropping? 
+            # Actually easier to crop numpy image then transform.
+            pil_image = Image.open(temp_file).convert("RGB")
+            
+            for m in masks:
+                mask = m["mask"]
+                
+                # Find bounding box of mask
+                y_indices, x_indices = np.where(mask > 0)
+                if len(y_indices) > 0:
+                    y_min, y_max = np.min(y_indices), np.max(y_indices)
+                    x_min, x_max = np.min(x_indices), np.max(x_indices)
+                    
+                    # Add padding
+                    pad = 10
+                    y_min = max(0, y_min - pad)
+                    y_max = min(h, y_max + pad)
+                    x_min = max(0, x_min - pad)
+                    x_max = min(w, x_max + pad)
+                    
+                    # Crop
+                    crop = pil_image.crop((x_min, y_min, x_max, y_max))
+                    
+                    # Transform for model
+                    transform = transforms.Compose([
+                        transforms.Resize((224, 224)),
+                        transforms.ToTensor(),
+                        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+                    ])
+                    input_tensor = transform(crop).unsqueeze(0).to(models["device"])
+                    
+                    # Classify
+                    with torch.no_grad():
+                        outputs = models["classifier"](input_tensor)
+                        _, preds = torch.max(outputs, 1)
+                        predicted_class = models["class_names"][preds.item()]
+                        m["label"] = predicted_class
+                        m["bbox"] = [int(x_min), int(y_min), int(x_max), int(y_max)]
+                else:
+                    m["label"] = "Unknown"
+                    m["bbox"] = []
+        else:
+             for m in masks:
+                 m["label"] = "Unknown"
 
         # 3. Calorie Estimation
         # We need to pass the encoded mask for the frontend

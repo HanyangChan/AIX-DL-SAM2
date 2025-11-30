@@ -4,13 +4,21 @@ import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
 import cv2
-from sam2.build_sam import build_sam2
-from sam2.sam2_image_predictor import SAM2ImagePredictor
+try:
+    from sam2.build_sam import build_sam2
+    from sam2.sam2_image_predictor import SAM2ImagePredictor
+    SAM2_AVAILABLE = True
+except ImportError:
+    SAM2_AVAILABLE = False
+    print("Warning: SAM2 module not found. Segmentation will use fallback.")
 
 def load_sam2_model(config_path, checkpoint_path, device="cuda"):
     """
     Loads the SAM2 model.
     """
+    if not SAM2_AVAILABLE:
+        raise ImportError("SAM2 module is not installed.")
+
     if not os.path.exists(config_path):
         raise FileNotFoundError(f"Config file not found: {config_path}")
     if not os.path.exists(checkpoint_path):

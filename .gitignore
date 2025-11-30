@@ -10,6 +10,7 @@ backend/dataset/
 backend/dummy_dataset/
 backend/*.zip
 backend/*.pth
+backend/*.pt
 *.pkl
 
 # IDE
