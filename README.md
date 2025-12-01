@@ -140,9 +140,18 @@ SAM2를 통해서 물체를 인식하고 EfficientNet V2를 이용해서 물체�
 
 <img width="540" height="796" alt="image" src="https://github.com/user-attachments/assets/0615e562-48f4-4579-8ae7-47dc7e2856a0" />
 
-이후 10번의 에포크를 돌린다음 결과는 다음과 같다. 
+이후 10%의 데이터셋만을 이용해서 10번의 에포크를 돌린다음 결과는 다음과 같다. 
 
 <img width="700" height="65" alt="image" src="https://github.com/user-attachments/assets/0d0f2368-d991-429a-a388-813b51901bbd" />
+
+다음으로 모든 데이터셋으로 학습을 돌렸을 때 5번의 에포크에서 결과는 다음과 같이 나왔다.
+
+<img width="327" height="73" alt="image" src="https://github.com/user-attachments/assets/b852eb22-fa5a-449f-ba6b-44339aedd00f" />
+
+이후 에포크를 20으로 늘렸지만 테스트 정확도가 오히려 떨어지는 오버피팅 현상이 발생하였다. 
+
+<img width="383" height="73" alt="image" src="https://github.com/user-attachments/assets/8745409a-365f-4e7c-a67b-0102f61868b7" />
+
 
 ## V. 분석 및 시각화
 
@@ -157,6 +166,8 @@ Confusion Matrix는 모델이 각 음식 클래스를 얼마나 정확하게 맞
 - ‘Donut’->’Donut’: 30번 맞춤
 - ‘Taco’->’Taco: 29번 맞춤
 - ‘Baked Potato’->’Baked Potato’: 18번 맞춤
+
+
 
 ### Grad-CAM
 
@@ -175,7 +186,10 @@ Confusion Matrix는 모델이 각 음식 클래스를 얼마나 정확하게 맞
 
 ### t-SNE
 
-<img width="1000" height="800" alt="image" src="https://github.com/user-attachments/assets/411d778e-f1bb-4fc1-bf67-4aff3e7e0975" />
+<img width="800" height="600" alt="image" src="https://github.com/user-attachments/assets/411d778e-f1bb-4fc1-bf67-4aff3e7e0975" />
+
+<img width="800" height="600" alt="tsne_plot" src="https://github.com/user-attachments/assets/5cc0424d-ba33-4ab6-8126-3d07af8a4d51" />
+
 
 t-SNE는 이미지 임베딩을 2D에 압축해 시각화한 것이다. 비슷한 종류의 음식 데이터는
 가까운 위치에 모이고 다른 종류의 음식은 멀리 떨어져 있음을 보여준다. 따라서 이 시
@@ -219,11 +233,14 @@ run_sam2_inference
 
 ```Bash
 cd backend
+pip install -r requirements.txt
 python -m uvicorn main:app --reload
 ```
 
+
 ```Bash
 cd frontend
+npm install
 npm rum dev
 ```
 이후 `http://localhost:5173`와 같은 url을 통해서 접속할 수 있다. 
