@@ -8,9 +8,9 @@ try:
     from sam2.build_sam import build_sam2
     from sam2.sam2_image_predictor import SAM2ImagePredictor
     SAM2_AVAILABLE = True
-except ImportError:
+except Exception as e:
     SAM2_AVAILABLE = False
-    print("Warning: SAM2 module not found. Segmentation will use fallback.")
+    print(f"Warning: SAM2 module failed to load ({e}). Segmentation will use fallback.")
 
 def load_sam2_model(config_path, checkpoint_path, device="cuda"):
     """

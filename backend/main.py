@@ -72,9 +72,17 @@ async def lifespan(app: FastAPI):
 
     # Load SAM2
     try:
-        sam2_ckpt = "backend/sam2_hiera_large.pt"
-        sam2_cfg = "sam2_hiera_l.yaml"
-        # We might need to adjust config path logic
+        sam2_ckpt = "backend/sam2.1_hiera_tiny.pt"
+        sam2_cfg = "configs/sam2.1/sam2.1_hiera_t.yaml" 
+        # Note: sam2 library usually expects config relative to its package or absolute path.
+        # If using sam2.build_sam.build_sam2, we might need just "sam2.1_hiera_t.yaml" if it's in the default configs.
+        # Let's try the simple name first, if it fails we might need to find where the config is.
+        # Actually, for sam2.1, the config name is likely "configs/sam2.1/sam2.1_hiera_t.yaml" if using the repo,
+        # but the installed package might handle "sam2.1_hiera_t.yaml".
+        # Let's stick to a safe guess or try to find it. 
+        # Reverting to simple name as per standard usage in tutorials.
+        sam2_cfg = "sam2.1_hiera_t.yaml"
+        
         if os.path.exists(sam2_ckpt):
              models["sam2"] = load_sam2_model(sam2_cfg, sam2_ckpt, device=models["device"])
              print("SAM2 loaded successfully.")
