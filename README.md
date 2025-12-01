@@ -199,6 +199,16 @@ t-SNE는 이미지 임베딩을 2D에 압축해 시각화한 것이다. 비슷�
 
 Meta AI의 SAM2를 위주로 하되 SAM2가 설치가 되지않았거나 문제가 생겼을 때 opencv가 대신 작동이 되도록 설정을 해두었다.
 
+facebook의 깃허브에서 해당 모델을 다운 받을 수 있다. 
+https://github.com/facebookresearch/sam2
+
+- [sam2.1_hiera_tiny.pt](https://dl.fbaipublicfiles.com/segment_anything_2/092824/sam2.1_hiera_tiny.pt)
+
+이후 다음과 같이 backend 폴더안에 `hiera_tiny.pt`를 넣어야 한다.
+
+<img width="220" height="54" alt="image" src="https://github.com/user-attachments/assets/ad2ef329-2b83-4b20-8093-00ee3fe2f29c" />
+
+
 SAM2 라이브러리를 이용하여 다음과 같이 불러올 수 있다. 
 
 `from sam2.build_sam import build_sam2`
