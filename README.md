@@ -251,7 +251,7 @@ python -m uvicorn main:app --reload
 ```Bash
 cd frontend
 npm install
-npm rum dev
+npm run dev
 ```
 이후 `http://localhost:5173`와 같은 url을 통해서 접속할 수 있다. 
 
