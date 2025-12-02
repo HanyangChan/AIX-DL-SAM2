@@ -47,7 +47,7 @@ function App() {
     <div className="container">
       <header style={{ marginBottom: '3rem', textAlign: 'center', paddingTop: '2rem' }}>
         <h1 className="title">AI Calorie Estimator</h1>
-        <p className="subtitle">Powered by SAM2 & Advanced Computer Vision</p>
+        <p className="subtitle">Powered by SAM2 & EfficientNet v2</p>
       </header>
 
       <main>
