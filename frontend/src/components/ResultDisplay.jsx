@@ -46,29 +46,31 @@ const ResultDisplay = ({ image, result, onReset }) => {
         if (item.bbox && item.bbox.length === 4) {
             const [x1, y1, x2, y2] = item.bbox;
             const centerX = (x1 + x2) / 2;
-            const centerY = (y1 + y2) / 2; // Center of bbox
+            const centerY = (y1 + y2) / 2;
 
-            ctx.font = 'bold 24px Inter, sans-serif';
+            ctx.font = '800 24px Inter, sans-serif'; // Extra Bold
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
 
             const text = `${item.label} (${item.calories} kcal)`;
             const metrics = ctx.measureText(text);
-            const padding = 12;
+            const padding = 16;
+            const boxHeight = 48;
 
-            // Text Background (Semi-transparent black)
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            // Draw White Background
+            ctx.fillStyle = '#ffffff'; // Pure White
+            ctx.beginPath();
             ctx.roundRect(
                 centerX - metrics.width / 2 - padding,
-                centerY - 24,
+                centerY - boxHeight / 2,
                 metrics.width + padding * 2,
-                48,
+                boxHeight,
                 8
             );
             ctx.fill();
 
-            // Text
-            ctx.fillStyle = '#ffffff';
+            // Draw Black Text
+            ctx.fillStyle = '#000000'; // Pure Black
             ctx.fillText(text, centerX, centerY);
         }
     };
