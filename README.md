@@ -269,18 +269,13 @@ npm run dev
 
 <img width="1100" height="742" alt="image" src="https://github.com/user-attachments/assets/c9a4cd66-69a6-4e39-b21c-950f09fdf94a" />
 
-- 12/3 : SAM2에 연결하는데 성공하였다. 하나의 객체에 대해서 여려 라벨이 출력되는 문제가 발견되었다. 
+- 12/3 : SAM2에 연결하는데 성공하였다. 하지만 하나의 객체에 대해서 여려 라벨이 출력되는 문제가 발견되었다. 
 
-  <img width="365" height="42" alt="image" src="https://github.com/user-attachments/assets/317fd972-a9ae-49ce-a616-88c57b23daa5" />
-
-
-<img width="1113" height="717" alt="스크린샷 2025-12-04 193049" src="https://github.com/user-attachments/assets/29267901-a67a-4457-a61f-c4cb38e5d0fd" 
+<img width="1000" height="600" alt="스크린샷 2025-12-04 201148" src="https://github.com/user-attachments/assets/9f09b769-54f8-4391-9ab7-4625ab1dc283" />
     
 또한 샌드위츠를 타코라고 인식되는 것처럼 잘못 인식이 되는 케이스도 발생하였다.
 
 <img width="800" height="500" alt="스크린샷 2025-12-04 203102" src="https://github.com/user-attachments/assets/d4991ad4-7e38-403d-90a2-8e44ce5c4599" />
-
-
 
 - 12/4 : 여러 오브젝트가 있어도 각기 다르게 잘 구별하도록 업데이트하기 위해서 softmax와 유사하게 점수 기반으로 예측을 하도록 변경하였다.
 
@@ -290,7 +285,6 @@ npm run dev
 그 결과 비록 타코가 단일 점수는 높더라도 여러 조각으로 인식된 샌드위치들의 점수 합계가 더 높기 때문에 최종적으로는 샌드위치가 예측값으로 출력이 된다.
 
 <img width="1094" height="682" alt="image" src="https://github.com/user-attachments/assets/5f3d7ff1-60fa-4146-a484-603f17504154" />
-
 
 
 ## IX Future Work
