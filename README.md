@@ -235,7 +235,6 @@ run_sam2_inference
 
 ## VII. 웹서비스 배포 (11/22 진행중)
 프론트앤드는 CSS, react와 자바스크립트를 활용하여 개발하였으며 pytest를 활용한 API endpoint 그리고 fastAPI를 활용하여 배포를 진행하였다. 
-<img width="800" height="400" alt="image" src="https://github.com/user-attachments/assets/4b4b0854-aca0-43a5-b0ca-5a85dbe4350a" />
 
 <img width="600" height="600" alt="image" src="https://github.com/user-attachments/assets/7b962e11-d181-40e0-86bf-af8a42d76354" />
 
@@ -256,6 +255,15 @@ npm run dev
 ```
 
 이후 `http://localhost:5173`와 같은 url을 통해서 접속할 수 있다. 
+
+<img width="800" height="400" alt="image" src="https://github.com/user-attachments/assets/4b4b0854-aca0-43a5-b0ca-5a85dbe4350a" />
+
+`test data` 폴더와 같이 캐글 데이터셋으로 학습한 데이터의 라벨만 인식이 가능하다. 
+
+또한 모델이 주변 배경과 환경에 민감하게 감지하여 잘못된 예측이 나올 수 있으니 다음과 같이 배경이 없는 사진으로 해야한다. 
+
+<img width="400" height="400" alt="BELT-샌드위치-썸넬" src="https://github.com/user-attachments/assets/b341341b-0798-4050-b467-0b8de8c08cff" />
+
 
 ## VIII 시행착오 및 업데이트
 
