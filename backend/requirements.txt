@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+python-multipart
+numpy
+opencv-python
+pillow
+torch
+torchvision
+matplotlib
+scikit-learn
+pandas
+seaborn
+wget
+timm
+git+https://github.com/facebookresearch/sam2.git

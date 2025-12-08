@@ -1,0 +1,351 @@
+SAM2 모델을 활용한 음식 사진 object segmentation과 칼로리 계산 모델
+
+- 황병찬 서울 데이터사이언스학부 2022069407 - 데이터 수집 및 코드 구축 및 블로그 작성
+- 엄태훈 서울 신소재공학부 2024082624 - 보고서 작성
+- 김연준 서울 융합전자공학부 2017027674 - 모델 학습
+
+
+## I. 프로젝트 개요
+### Motivation 
+Facebook AI (현 meta AI)에서 개발한 visual segmentation 모델 SAM(Segment Anything Model)은 사전 학습된 파운데이션 모델(Pre-trained foundation model)으로 이미지 속에 있는 객체를 segmentation을 하고 기존의 컴퓨터 비전에서의 문제인 데이터 부족이라는 문제를 극복하기 위한 파운데이션 모델을 구축하였다. 이후 2024년 9월 출시한 SAM2는 이미지를 넘어서 동영상 객체에 대해서도 segmentation을 효과적으로 실행할 수 있는 능력을 보여준다. 따라서 SAM2를 적용할 데이터셋을 탐색하는 중 kaggle의 음식 사진 데이터셋을 발견하여 이를 통해서 SAM2를 적용할 계획이다. 최종적인 목표로 각각의 음식들과 이에 상응하는 칼로리를 매칭하여 전체적인 칼로리를 계산할 수 있는 모델을 구현 해보고자 한다. 
+
+### Problem with current food segmentation apps
+기존의 칼로리 측정앱을 사용해보면서 갖고 있는 문제점들에 대해서 알아보고자 하였다. 따라서 카카오 헬스케어에서 운영중인 "파스타"라는 칼로리 측정어플을 이용해보았다. 어플을 사용해보면서 가장 큰 문제점으로는 같은 음식이면 크기에 상관없이 항상 일정한 칼로리로 측정을 하는 문제점이 존재한다. 아래 사진들과 같이 떡볶이라는 음식 사진을 측정할 때 음식의 양과 재료들이 다르지만 항상 일정하게 509kcal로 측정을 하고 있다.
+
+<img width="200" height="400" alt="image" src="https://github.com/user-attachments/assets/f94b57e8-17e8-4165-ae00-8a6b14386bdd" />
+<img width="200" height="400" alt="image" src="https://github.com/user-attachments/assets/c120e213-07f0-4e98-a223-db38b06ab7a0" />
+<img width="200" height="400" alt="image" src="https://github.com/user-attachments/assets/d225a83f-06e7-4aeb-9437-aee8ddf4a832" />
+
+또한 음식의 칼로리를 측정할 때 전체 칼로리 하나만 측정이 되고 음식 내에 세부적인 칼로리 등에 대해서는 측정이 되지 않거나 아예 무시되는 개선사항이 존재한다. 아래 사진에서는 스테이크 뿐만 아니라 랍스타와 채소들도 있지만 오직 스테이크 하나만을 측정하고 있다. 
+
+<img width="300" height="600" alt="image" src="https://github.com/user-attachments/assets/9117ab09-01c9-45ed-be04-4ab47dbba713" />
+
+
+### What do you want to see at the end?
+기존 Yolo 기반 모델이 아닌 SAM2 모델을 선택한 이유로는 우선 프롬프트 기반의 인스턴스 분할이 가능하며 특히 SAM2에는 모델이 보지 못한 객체에서도 사용자의 프롬프트에 따라 분할이 가능한(Class-agnostic) 장점이 있다. 또한 SAM2의 뛰어난 generalization 성능을 이용하여 파인튜닝을 통한 음식의 객체를 분석할 예정이다. 이를 통해서 음식의 사진과 음식의 용량을 파악하고 입력 이미지의 칼로리가 어떻게 될 것인지 예측하는 모델을 구현할 예정이다.  
+
+## II. 데이터셋 구축
+### 데이터 수집 및 구성 
+kaggle에 음식 사진을 수집하여 데이터셋을 구축한다. 
+- 음식 사진 분류: [Food Image Classification Dataset](https://www.kaggle.com/datasets/harishkumardatalab/food-image-classification-dataset)
+
+### 디렉토리 구조
+```
+data/
+├── train/
+│   ├── 도넛/
+│   └── 피자/
+|   └── .../
+|   └── .../
+├── val/
+│   ├── 도넛/
+│   └── 피자/
+|   └── .../
+|   └── .../
+└── test/
+    ├── 도넛/
+    └── 피자/
+    └── .../
+    └── .../
+```
+
+### 전처리
+
+## III. 모델: SAM2 상세 설명
+
+<img width="1248" height="313" alt="image" src="https://github.com/user-attachments/assets/34321423-3113-4d0e-941d-f5a555b44bf3" />
+
+본 프로젝트에서는 SAM2를 채택하였으며 장점과 모델의 특징으로는 다음과 같다:
+SAM 2는 이미지나 동영상에서 원하는 객체만 선택해서 분할(segmentation)하기 위한 모델이다.
+가장 큰 특징으로는 프롬프팅이 가능하며 `포인트 클릭`, `박스 지정`, `마스크 제공` 같은 프롬프트 기능이 존재한다. 
+
+### `이미지 인코더`
+
+역할
+
+-동영상 프레임이 들어올 때마다 해당 프레임을 특징(feature) 토큰으로 변환한다.
+
+-한 번의 상호작용 과정 전체에서 이미지 인코더는 프레임마다 한 번만 실행되며, 이후 단계들은 이 feature를 계속 활용한다.
+
+-계층적 구조이기 때문에 멀티스케일 특징(고해상도·저해상도)을 모두 사용할 수 있다.
+
+### `메모리 어텐션 (Memory attention)`
+
+해당 모델에서 메모리란 
+-과거 프레임에서 모델이 예측한 결과들(마스크)과 그 프레임의 특징 정보들을 저장한 공간.
+
+-이 메모리는 다음 프레임의 segmentation에 도움을 준다.
+
+동작 방식 
+각 프레임을 처리할 때 다음 순서로 진행된다.
+
+1.현재 프레임의 이미지 feature를 transformer block에 입력
+
+2.Self-attention으로 현재 프레임 내부 정보를 먼저 정리
+
+3.저장된 메모리(과거 프레임 특징 + 예측) 와 cross-attention
+→ 과거 정보를 참고하여 현재 프레임의 segmentation을 더 정확히 만듦
+
+4.MLP로 출력 정제
+
+즉, 과거 프레임의 정보와 현재 프레임의 특징과 새로운 프롬프트
+→ 이 세 가지를 조합해서 현재 프레임의 최종 임베딩을 만든다.
+
+
+### `프롬프트 인코더`
+
+SAM 1과 동일한 방식 사용
+
+사용자가 클릭한 좌표, bounding box, 또는 기존 마스크를 임베딩으로 변환
+
+클릭/박스는 학습된 embedding + 위치 정보
+
+마스크는 conv 네트워크를 통해 임베딩 후 프레임 임베딩에 더함
+
+### `마스크 디코더`
+
+프레임 임베딩 + 프롬프트 임베딩을 함께 입력
+
+이를 양방향 transformer block 여러 개로 업데이트하면서 최종 segmentation 마스크 생성
+
+여러 마스크가 필요한 경우(예: 단일 클릭으로 ambiguous한 경우)
+→ 여러 개의 후보 마스크 출력
+
+동영상에서도 프레임별로 여러 마스크를 예측할 수 있음
+
+<img width="900" height="387" alt="image" src="https://github.com/user-attachments/assets/84c7eefd-6c03-4512-ba24-096edcde7211" />
+
+디코더 디자인은  프롬프트와 프레임 임베딩을 업데이트하는 양방향 transformer block을 쌓는다. 만약 여러 마스크가 있을 수 있는 모호한 프롬프트, 즉 단일 클릭의 경우, 여러 마스크를 예측한다. 모호성이 프레임 전체로 확장될 수 있는 동영상의 경우, 모델은 각 프레임에서 여러 마스크를 예측한다. 후속 프롬프트가 모호성을 해결하지 못하면, 모델은 현재 프레임에 대해 예측된 IoU(mlp의 output)가 가장 높은 마스크만 전파한다.
+
+
+
+## IV. 학습 과정
+
+<img width="1248" height="681" alt="image" src="https://github.com/user-attachments/assets/c3f115e3-0849-4ac9-9406-40e8e80dacb5" />
+
+
+
+
+SAM2를 통해서 물체를 인식하고 EfficientNet V2를 이용해서 물체를 분류(classification)할 예정이다. EfficientNet은 기존의 CNN이나 ResNet에서 정확도와 효율에서 좋은 모습을 보이기 때문에 선택하였다. ImageNet을 학습한 Pretrained된 EfficientNet을 사용하였다. 
+
+
+
+- **프레임워크** : PyTorch
+- **손실 함수** : CrossEntropy
+- **옵티마이저** : Adam (lr = 0.0001)
+- **scheduler** : StepLR (gamma=0.1)
+- **Proportion of train/vaildation** : 80/20%
+- **실행 환경** : colab TPU
+
+다음과 같은 세팅으로 우선 아무 학습없이 하였을 때 분류하였을 때 다음과 같은 결과가 나왔다. 
+
+<img width="540" height="796" alt="image" src="https://github.com/user-attachments/assets/0615e562-48f4-4579-8ae7-47dc7e2856a0" />
+
+이후 10%의 데이터셋만을 이용해서 10번의 에포크를 돌린다음 결과는 다음과 같다. 
+
+<img width="700" height="65" alt="image" src="https://github.com/user-attachments/assets/0d0f2368-d991-429a-a388-813b51901bbd" />
+
+다음으로 모든 데이터셋으로 학습을 돌렸을 때 5번의 에포크에서 결과는 다음과 같이 나왔다.
+
+<img width="327" height="73" alt="image" src="https://github.com/user-attachments/assets/b852eb22-fa5a-449f-ba6b-44339aedd00f" />
+
+이후 에포크를 20으로 늘렸지만 테스트 정확도가 오히려 떨어지는 오버피팅 현상이 발생하였다. 
+
+<img width="383" height="73" alt="image" src="https://github.com/user-attachments/assets/8745409a-365f-4e7c-a67b-0102f61868b7" />
+
+
+## V. 분석 및 시각화
+
+### Confusion Matrix
+
+<img width="1000" height="800" alt="image" src="https://github.com/user-attachments/assets/4632600e-627d-452f-862d-f398b6b04708" />
+
+Confusion Matrix는 모델이 각 음식 클래스를 얼마나 정확하게 맞추는지 보여주는 혼동 행렬이다.
+오른쪽 아래 정방향으로의 대각선은 맞춘 개수를, 대각선 바깥쪽은 틀린 개수를 의미한
+다. 어떤 클래스끼리 헷갈리는지를 한눈에 보여주는 자료라고 볼 수 있다.
+
+- ‘Donut’->’Donut’: 30번 맞춤
+- ‘Taco’->’Taco: 29번 맞춤
+- ‘Baked Potato’->’Baked Potato’: 18번 맞춤
+
+
+
+### Grad-CAM
+
+<img width="800" height="400" alt="image" src="https://github.com/user-attachments/assets/5e2519d0-a28d-44ce-9f29-653b956a6064" />
+
+<img width="800" height="400" alt="image" src="https://github.com/user-attachments/assets/2320c771-0cce-4997-a9c6-48c424d7daa6" />
+
+왼쪽 사진은 원본 이미지고 오른쪽 사진은 Grad-Cam 결과 이미지다. Grad-Cam은 모델
+이 이미지를 보고 예측을 내릴 때 어느 부분을 가장 중요하게 봤는지를 시각화한 자료다.
+빨간색~노란색은 모델이 강하게 주목한 부분을, 파란색은 별로 주목하지 않은 부분을 의
+미한다.
+
+첫번째 만두 사진에서는 만두 형태의 윗부분과 골격을 강하게 참고해서 ‘momos’
+라고 판단했다는 의미이고 두번째 치즈 케이크 사진에서는 케이크 형태의 중심을 강하게
+참고해서 ‘cheesecake’라고 판단했다는 의미이다.
+
+### t-SNE
+
+<img width="800" height="600" alt="image" src="https://github.com/user-attachments/assets/411d778e-f1bb-4fc1-bf67-4aff3e7e0975" />
+
+<img width="800" height="600" alt="tsne_plot" src="https://github.com/user-attachments/assets/5cc0424d-ba33-4ab6-8126-3d07af8a4d51" />
+
+
+t-SNE는 이미지 임베딩을 2D에 압축해 시각화한 것이다. 비슷한 종류의 음식 데이터는
+가까운 위치에 모이고 다른 종류의 음식은 멀리 떨어져 있음을 보여준다. 따라서 이 시
+각화 자료는 모델이 추출한 특징으로 음식을 얼마나 잘 구분했는지 보여주는 그래프다.
+
+## VI. 전체 흐름 개요 및 SAM2 모델 활용
+
+Meta AI의 SAM2를 위주로 하되 SAM2가 설치가 되지않았거나 문제가 생겼을 때 opencv가 대신 작동이 되도록 설정을 해두었다.
+
+facebook의 깃허브에서 해당 모델을 다운 받을 수 있다. 
+https://github.com/facebookresearch/sam2
+
+- [sam2.1_hiera_tiny.pt](https://dl.fbaipublicfiles.com/segment_anything_2/092824/sam2.1_hiera_tiny.pt)
+
+이후 다음과 같이 backend 폴더안에 `hiera_tiny.pt`를 넣어야 한다.
+
+<img width="220" height="54" alt="image" src="https://github.com/user-attachments/assets/ad2ef329-2b83-4b20-8093-00ee3fe2f29c" />
+
+```bash
+git clone https://github.com/facebookresearch/sam2.git && cd sam2
+
+pip install -e .
+
+```
+
+
+SAM2 라이브러리를 이용하여 다음과 같이 불러올 수 있다. 
+
+`from sam2.build_sam import build_sam2`
+
+`from sam2.sam2_image_predictor import SAM2ImagePredictor`
+
+실행 위치 (Code Location):
+
+`backend/main.py`
+: 
+predict
+ 함수 안에서 
+run_sam2_inference
+를 호출하여 SAM2를 실행합니다. 여기서 그리드 포인트를 생성하고 결과를 수집합니다.
+backend/sam2_utils.py
+: 실제로 SAM2 모델을 로드하고(
+load_sam2_model
+) 추론을 수행하는(
+run_sam2_inference
+) 코드가 들어있습니다.
+
+
+
+## VII. 설치 및 실행 가이드 (Installation & Run Guide)
+
+이 프로젝트를 로컬 환경(다른 노트북 등)에서 실행하려면 다음 단계를 따르세요.
+
+### 1. 프로젝트 다운로드
+```bash
+git clone https://github.com/HanyangChan/AIX-DL-SAM2.git
+cd AIX-DL-SAM2
+```
+
+### 2. Backend 설정 (필수!)
+**가장 중요한 단계입니다.** `backend` 폴더로 이동하여 필요한 라이브러리(SAM2 포함)를 설치해야 합니다.
+
+```bash
+cd backend
+pip install -r requirements.txt
+```
+> **Tip**: `requirements.txt` 안에는 `sam2`, `torch`, `uvicorn` 등 실행에 필요한 모든 패키지가 포함되어 있습니다.
+
+### 3. Frontend 설정
+```bash
+cd ../frontend
+npm install
+```
+
+### 4. 실행 방법
+
+**Backend 실행 (서버 켜기)**
+```bash
+# backend 폴더에서
+python -m uvicorn main:app --reload
+```
+
+**Frontend 실행 (웹 화면 켜기)**
+```bash
+# frontend 폴더에서
+npm run dev
+```
+
+이제 브라우저에서 `http://localhost:5173`으로 접속하면 앱을 사용할 수 있습니다.
+
+---
+
+### ⚠️ 문제 해결 (Troubleshooting)
+
+**Q. 음식을 인식 못하고 계속 'Unknown'만 떠요!**
+- **원인 1**: `sam2` 라이브러리가 제대로 설치되지 않았을 수 있습니다. (`backend` 폴더에서 `pip install -r requirements.txt`를 다시 실행해보세요.)
+- **원인 2**: 모델 파일(`best_model.pth`)이 손상되었거나 버전이 맞지 않을 수 있습니다.
+
+**해결 방법 (모델 재학습)**
+`backend` 폴더 안에 있는 **`train_model.bat`** 파일을 실행하세요.
+- 이 파일은 자동으로 데이터셋을 확인하고 올바른 모델(EfficientNet V2)을 다시 학습시켜서 `best_model.pth`를 새로 생성합니다.
+- 학습이 완료된 후 서버를 껐다 켜면 정상 작동합니다.
+
+**Q. 'timm' 관련 오류가 떠요!**
+- `pip install timm`을 실행하거나 `requirements.txt`를 다시 설치해주세요.
+
+---
+
+
+## VIII 시행착오 및 업데이트
+
+- 11/25 : 다음과 같이 처음 보는 사진들에 대해서 잘 인식을 하지못하는 모습을 보여주고 있다. 우선 기초적인 틀을 만들기 위해서 웹에서는 SAM2모델는 이후 추가할 예정이므로 물체를 인식하는 능력이 엄청 뛰어나지 않으며 기존 이미지에서 오버피팅되는 모습을 보여준다. 따라서 이후 SAM2을 연결할 예정이며 성능이 좋지 않은 경우 이미지 데이터셋을 파인 튜닝하여 성능을 향상시킬 예정이다.  
+
+<img width="932" height="810" alt="image" src="https://github.com/user-attachments/assets/5429d806-95fe-457f-a8e4-51510b60bddd" />
+
+- 12/2 : 다른 로컬 환경에서 실행한다고 하였을 때 SAM 모델이 연결이 되지 않는 문제가 발생하였다. 모델의 경로 문제와 관련이 있어보여 수정할 예정이다. 
+
+캐글에 있는 데이터셋을 통하여 efficientNet을 학습시키였고 sam2를 바탕으로 물체를 segementation하도록 하였다. 여러 물체가 있는 경우에도 서로 구별하여 잘 인식하고 있으며 각각의 칼로리를 계산해서 더하고 있다. 
+
+<img width="1100" height="742" alt="image" src="https://github.com/user-attachments/assets/c9a4cd66-69a6-4e39-b21c-950f09fdf94a" />
+
+- 12/3 : SAM2에 연결하는데 성공하였다. 하지만 하나의 객체에 대해서 여려 라벨이 출력되는 문제가 발견되었다. 
+
+<img width="1000" height="600" alt="스크린샷 2025-12-04 201148" src="https://github.com/user-attachments/assets/9f09b769-54f8-4391-9ab7-4625ab1dc283" />
+    
+또한 샌드위츠를 타코라고 인식되는 것처럼 잘못 인식이 되는 케이스도 발생하였다.
+
+<img width="800" height="500" alt="스크린샷 2025-12-04 203102" src="https://github.com/user-attachments/assets/d4991ad4-7e38-403d-90a2-8e44ce5c4599" />
+
+- 12/4 : 여러 오브젝트가 있어도 각기 다르게 잘 구별하도록 업데이트하기 위해서 softmax와 유사하게 점수 기반으로 예측을 하도록 변경하였다.
+
+예를 들어, 기존에는 샌드위치라는 객체를 타코라고 잘못 인식을 하였는데 겹쳐있는 모든 인식 결과들의 점수를 합산하여 투표하도록 변경하여 기존에는 단순히 '가장 점수가 높은 하나(타코)'가 선택되었지만
+이제는 겹쳐있는 모든 인식 결과들의 점수를 합산하여 투표하도록 변경하였다. 
+
+그 결과 비록 타코가 단일 점수는 높더라도 여러 조각으로 인식된 샌드위치들의 점수 합계가 더 높기 때문에 최종적으로는 샌드위치가 예측값으로 출력이 된다.
+
+<img width="1094" height="682" alt="image" src="https://github.com/user-attachments/assets/5f3d7ff1-60fa-4146-a484-603f17504154" />
+
+
+## IX Future Work
+
+프로젝트 이후로 추가로 시도하여 기능을 추가할 요소들은 다음과 같다. 
+
+### 더 많은 데이터로 학습
+
+현재 예측 답변으로 나올 수 있는 음식의 수는 34개로 Kaggle에서 받은 데이터셋을 통하여 학습시킨 EfficientNet으로 분류하도록 하였다. 여기에서 더 많고 다양한 데이터셋을 학습하여 실제 사용가능한 어플로 개발할 수 있다.
+
+### 무게 추정하여 정량적으로 계산
+
+현재 음식의 칼로리는 크기나 양에 상관없이 항상 일정하고 딕셔너리 형태로 되어있으며 인식한 음식과 해당 딕셔너리에 있는 칼로리를 출력하도록 설계되어있다. 하지만 여기에서 추가적으로 주변의 배경이나 음식의 크기를 통해서 무게를 정량적으로 예측을 한다면 조금 더 정확하게 예측을 할 수 있을 것이다. 하지만 이를 위해서는 주변의 환경이나 크기를 추론해야하므로 GPT와 같은 멀티모달 AI등을 활용해야 추가가 가능할 것으로 보인다.
+
+### SAM3 모델 활용 
+
+지난 25년 11월에 meta AI에서 SAM3의 출시를 발표하였다. SAM2와 비교하였을 때 SAM3의 가장 큰 특징으로는 이미지나 동영상에서 객체들을 시각적 세분화가 가능하며 더욱 정확한 성능을 보여주는 것이 특징이다. 이 SAM3는 아직 라이브러리로써는 사용이 불가능하지만 출시가 되었을 때 우리의 칼로리 분석 프로그램에서 다음과 같이 활용할 수 있다.
+
+- 비디오 세분화를 이용한 실시간 음식 칼로리 계산
+- 음식의 재료 하나하나 세분화를 통한 정확한 칼로리 계산 
+

@@ -1,0 +1,136 @@
+Processing 30 candidates for Voting NMS...
+
+Candidate 0: Label 'Donut', Score 0.991, Box [114, 164, 380, 378]
+  -> New Cluster 0
+
+Candidate 1: Label 'Donut', Score 0.983, Box [114, 164, 380, 378]
+  vs Cluster 0 (Donut): MaskIoU 0.99, BoxIoU 1.00, Dist 0.00
+  -> Added to Cluster 0
+
+Candidate 2: Label 'Donut', Score 0.982, Box [115, 164, 380, 377]
+  vs Cluster 0 (Donut): MaskIoU 0.99, BoxIoU 0.99, Dist 0.00
+  -> Added to Cluster 0
+
+Candidate 3: Label 'Donut', Score 0.980, Box [114, 164, 380, 377]
+  vs Cluster 0 (Donut): MaskIoU 0.99, BoxIoU 1.00, Dist 0.00
+  -> Added to Cluster 0
+
+Candidate 4: Label 'Donut', Score 0.977, Box [114, 164, 380, 378]
+  vs Cluster 0 (Donut): MaskIoU 0.99, BoxIoU 1.00, Dist 0.00
+  -> Added to Cluster 0
+
+Candidate 5: Label 'Donut', Score 0.971, Box [114, 164, 380, 377]
+  vs Cluster 0 (Donut): MaskIoU 0.99, BoxIoU 1.00, Dist 0.00
+  -> Added to Cluster 0
+
+Candidate 6: Label 'Donut', Score 0.970, Box [114, 164, 380, 378]
+  vs Cluster 0 (Donut): MaskIoU 0.99, BoxIoU 1.00, Dist 0.00
+  -> Added to Cluster 0
+
+Candidate 7: Label 'Donut', Score 0.969, Box [115, 164, 380, 378]
+  vs Cluster 0 (Donut): MaskIoU 0.99, BoxIoU 1.00, Dist 0.00
+  -> Added to Cluster 0
+
+Candidate 8: Label 'Taquito', Score 0.942, Box [126, 273, 202, 338]
+  vs Cluster 0 (Donut): MaskIoU 0.05, BoxIoU 0.09, Dist 0.26
+  -> Added to Cluster 0
+
+Candidate 9: Label 'Sandwich', Score 0.937, Box [569, 171, 816, 262]
+  vs Cluster 0 (Donut): MaskIoU 0.00, BoxIoU 0.00, Dist 1.31
+  -> New Cluster 1
+
+Candidate 10: Label 'Taco', Score 0.930, Box [569, 171, 816, 257]
+  vs Cluster 0 (Donut): MaskIoU 0.00, BoxIoU 0.00, Dist 1.32
+  vs Cluster 1 (Sandwich): MaskIoU 0.98, BoxIoU 0.95, Dist 0.01
+  -> Added to Cluster 1
+
+Candidate 11: Label 'Sandwich', Score 0.923, Box [569, 171, 816, 262]
+  vs Cluster 0 (Donut): MaskIoU 0.00, BoxIoU 0.00, Dist 1.31
+  vs Cluster 1 (Sandwich): MaskIoU 0.99, BoxIoU 1.00, Dist 0.00
+  -> Added to Cluster 1
+
+Candidate 12: Label 'Sandwich', Score 0.896, Box [270, 291, 342, 352]
+  vs Cluster 0 (Donut): MaskIoU 0.05, BoxIoU 0.08, Dist 0.23
+  -> Added to Cluster 0
+
+Candidate 13: Label 'dhokla', Score 0.890, Box [215, 237, 283, 280]
+  vs Cluster 0 (Donut): MaskIoU 0.04, BoxIoU 0.05, Dist 0.04
+  -> Added to Cluster 0
+
+Candidate 14: Label 'Fries', Score 0.884, Box [200, 204, 248, 271]
+  vs Cluster 0 (Donut): MaskIoU 0.02, BoxIoU 0.06, Dist 0.12
+  -> Added to Cluster 0
+
+Candidate 15: Label 'Donut', Score 0.872, Box [147, 240, 406, 389]
+  vs Cluster 0 (Donut): MaskIoU 0.00, BoxIoU 0.51, Dist 0.15
+  -> Added to Cluster 0
+
+Candidate 16: Label 'Donut', Score 0.829, Box [149, 231, 406, 389]
+  vs Cluster 0 (Donut): MaskIoU 0.00, BoxIoU 0.53, Dist 0.15
+  -> Added to Cluster 0
+
+Candidate 17: Label 'Donut', Score 0.812, Box [147, 239, 406, 389]
+  vs Cluster 0 (Donut): MaskIoU 0.00, BoxIoU 0.51, Dist 0.15
+  -> Added to Cluster 0
+
+Candidate 18: Label 'Donut', Score 0.810, Box [115, 165, 379, 369]
+  vs Cluster 0 (Donut): MaskIoU 0.93, BoxIoU 0.95, Dist 0.01
+  -> Added to Cluster 0
+
+Candidate 19: Label 'Baked Potato', Score 0.804, Box [138, 325, 363, 379]
+  vs Cluster 0 (Donut): MaskIoU 0.06, BoxIoU 0.21, Dist 0.24
+  -> Added to Cluster 0
+
+Candidate 20: Label 'Sandwich', Score 0.785, Box [568, 305, 810, 378]
+  vs Cluster 0 (Donut): MaskIoU 0.00, BoxIoU 0.00, Dist 1.31
+  vs Cluster 1 (Sandwich): MaskIoU 0.00, BoxIoU 0.00, Dist 0.48
+  -> Added to Cluster 1
+
+Candidate 21: Label 'Sandwich', Score 0.757, Box [583, 340, 801, 381]
+  vs Cluster 0 (Donut): MaskIoU 0.00, BoxIoU 0.00, Dist 1.33
+  vs Cluster 1 (Sandwich): MaskIoU 0.00, BoxIoU 0.00, Dist 0.55
+  -> Added to Cluster 1
+
+Candidate 22: Label 'Sandwich', Score 0.754, Box [557, 300, 802, 381]
+  vs Cluster 0 (Donut): MaskIoU 0.00, BoxIoU 0.00, Dist 1.28
+  vs Cluster 1 (Sandwich): MaskIoU 0.00, BoxIoU 0.00, Dist 0.47
+  -> Added to Cluster 1
+
+Candidate 23: Label 'Sandwich', Score 0.749, Box [571, 344, 801, 381]
+  vs Cluster 0 (Donut): MaskIoU 0.00, BoxIoU 0.00, Dist 1.31
+  vs Cluster 1 (Sandwich): MaskIoU 0.00, BoxIoU 0.00, Dist 0.56
+  -> Added to Cluster 1
+
+Candidate 24: Label 'Sandwich', Score 0.703, Box [574, 307, 772, 338]
+  vs Cluster 0 (Donut): MaskIoU 0.00, BoxIoU 0.00, Dist 1.26
+  vs Cluster 1 (Sandwich): MaskIoU 0.00, BoxIoU 0.00, Dist 0.41
+  -> Added to Cluster 1
+
+Candidate 25: Label 'Sandwich', Score 0.656, Box [556, 237, 811, 327]
+  vs Cluster 0 (Donut): MaskIoU 0.00, BoxIoU 0.00, Dist 1.28
+  vs Cluster 1 (Sandwich): MaskIoU 0.00, BoxIoU 0.15, Dist 0.25
+  -> Added to Cluster 1
+
+Candidate 26: Label 'Sandwich', Score 0.621, Box [583, 221, 772, 265]
+  vs Cluster 0 (Donut): MaskIoU 0.00, BoxIoU 0.00, Dist 1.26
+  vs Cluster 1 (Sandwich): MaskIoU 0.01, BoxIoU 0.34, Dist 0.12
+  -> Added to Cluster 1
+
+Candidate 27: Label 'Sandwich', Score 0.487, Box [557, 260, 795, 328]
+  vs Cluster 0 (Donut): MaskIoU 0.00, BoxIoU 0.00, Dist 1.26
+  vs Cluster 1 (Sandwich): MaskIoU 0.00, BoxIoU 0.01, Dist 0.30
+  -> Added to Cluster 1
+
+Candidate 28: Label 'Sandwich', Score 0.348, Box [556, 237, 814, 333]
+  vs Cluster 0 (Donut): MaskIoU 0.00, BoxIoU 0.00, Dist 1.28
+  vs Cluster 1 (Sandwich): MaskIoU 0.00, BoxIoU 0.15, Dist 0.26
+  -> Added to Cluster 1
+
+Candidate 29: Label 'Sandwich', Score 0.346, Box [569, 171, 816, 262]
+  vs Cluster 0 (Donut): MaskIoU 0.00, BoxIoU 0.00, Dist 1.31
+  vs Cluster 1 (Sandwich): MaskIoU 0.93, BoxIoU 1.00, Dist 0.00
+  -> Added to Cluster 1
+
+Resolving 2 clusters...
+Cluster 0: Votes {'Donut': np.float32(11.144763), 'Taquito': np.float32(0.9418743), 'Sandwich': np.float32(0.8962844), 'dhokla': np.float32(0.88987476), 'Fries': np.float32(0.8841531), 'Baked Potato': np.float32(0.8042803)} -> Winner: Donut
+Cluster 1: Votes {'Sandwich': np.float32(8.067419), 'Taco': np.float32(0.9300183)} -> Winner: Sandwich
