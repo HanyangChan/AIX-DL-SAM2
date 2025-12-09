@@ -209,13 +209,6 @@ https://github.com/facebookresearch/sam2
 
 <img width="220" height="54" alt="image" src="https://github.com/user-attachments/assets/ad2ef329-2b83-4b20-8093-00ee3fe2f29c" />
 
-```bash
-git clone https://github.com/facebookresearch/sam2.git && cd sam2
-
-pip install -e .
-
-```
-
 
 SAM2 라이브러리를 이용하여 다음과 같이 불러올 수 있다. 
 
@@ -230,19 +223,18 @@ SAM2 라이브러리를 이용하여 다음과 같이 불러올 수 있다.
 predict
  함수 안에서 
 run_sam2_inference
-를 호출하여 SAM2를 실행합니다. 여기서 그리드 포인트를 생성하고 결과를 수집합니다.
+를 호출하여 SAM2를 실행한다. 여기서 그리드 포인트를 생성하고 결과를 수집한다.
 backend/sam2_utils.py
 : 실제로 SAM2 모델을 로드하고(
 load_sam2_model
 ) 추론을 수행하는(
 run_sam2_inference
-) 코드가 들어있습니다.
+) 코드가 들어있다.
 
 
 
 ## VII. 설치 및 실행 가이드 (Installation & Run Guide)
 
-이 프로젝트를 로컬 환경(다른 노트북 등)에서 실행하려면 다음 단계를 따르세요.
 
 ### 1. 프로젝트 다운로드
 ```bash
@@ -251,13 +243,12 @@ cd AIX-DL-SAM2
 ```
 
 ### 2. Backend 설정 (필수!)
-**가장 중요한 단계입니다.** `backend` 폴더로 이동하여 필요한 라이브러리(SAM2 포함)를 설치해야 합니다.
+ `backend` 폴더로 이동하여 필요한 라이브러리(SAM2 포함)를 설치해야 한다.
 
 ```bash
 cd backend
 pip install -r requirements.txt
 ```
-> **Tip**: `requirements.txt` 안에는 `sam2`, `torch`, `uvicorn` 등 실행에 필요한 모든 패키지가 포함되어 있습니다.
 
 ### 3. Frontend 설정
 ```bash
@@ -272,6 +263,7 @@ npm install
 # backend 폴더에서
 python -m uvicorn main:app --reload
 ```
+> **Tip**: `Windows`버전의 경우 `py -m uvicorn main:app --reload`으로 실행이 가능할 수도 있다. 
 
 **Frontend 실행 (웹 화면 켜기)**
 ```bash
@@ -279,25 +271,11 @@ python -m uvicorn main:app --reload
 npm run dev
 ```
 
-이제 브라우저에서 `http://localhost:5173`으로 접속하면 앱을 사용할 수 있습니다.
+이제 브라우저에서 `http://localhost:5173`으로 접속할 수 있다. 
 
 ---
 
-### ⚠️ 문제 해결 (Troubleshooting)
 
-**Q. 음식을 인식 못하고 계속 'Unknown'만 떠요!**
-- **원인 1**: `sam2` 라이브러리가 제대로 설치되지 않았을 수 있습니다. (`backend` 폴더에서 `pip install -r requirements.txt`를 다시 실행해보세요.)
-- **원인 2**: 모델 파일(`best_model.pth`)이 손상되었거나 버전이 맞지 않을 수 있습니다.
-
-**해결 방법 (모델 재학습)**
-`backend` 폴더 안에 있는 **`train_model.bat`** 파일을 실행하세요.
-- 이 파일은 자동으로 데이터셋을 확인하고 올바른 모델(EfficientNet V2)을 다시 학습시켜서 `best_model.pth`를 새로 생성합니다.
-- 학습이 완료된 후 서버를 껐다 켜면 정상 작동합니다.
-
-**Q. 'timm' 관련 오류가 떠요!**
-- `pip install timm`을 실행하거나 `requirements.txt`를 다시 설치해주세요.
-
----
 
 
 ## VIII 시행착오 및 업데이트
