@@ -8,8 +8,6 @@ SAM2 모델을 활용한 음식 사진 object segmentation과 칼로리 계산 �
 
 [유튜브 영상](https://www.youtube.com/watch?v=Pr6uKFMPOuM)
 
-[![Video Label](http://img.youtube.com/vi/Pr6uKFMPOuM/0.jpg)](https://www.youtube.com/watch?v=Pr6uKFMPOuM))
-
 
 ## I. 프로젝트 개요
 ### Motivation 
