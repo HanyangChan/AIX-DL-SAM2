@@ -250,6 +250,15 @@ cd backend
 pip install -r requirements.txt
 ```
 
+### 2.1 학습한 가중치 다운로드
+파일의 용량의 문제로 구글 드라이브에 업로드하였다.
+다음과 같이 `best_model.pth`를 `backend`폴더에 옮겨야한다.
+
+<img width="126" height="27" alt="image" src="https://github.com/user-attachments/assets/93461b79-e400-4d5d-94ad-33225fadec96" />
+
+
+https://drive.google.com/file/d/10zX6IvO4ssBLPP0_zt9QJPLibyQda6cO/view?usp=sharing
+
 ### 3. Frontend 설정
 ```bash
 cd ../frontend
